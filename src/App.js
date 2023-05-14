@@ -1,25 +1,29 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react';
+import {BrowserRouter, Route, Routes} from "react-router-dom";
+import RoutesMap from "./components/routesmap";
+import Devices from "./components/devices";
+import LastPosition from "./components/lastPosition";
+import Login from "./components/login";
+import Register from "./components/register";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+
+class App extends React.Component {
+    render() {
+        return (
+            <div>
+                <BrowserRouter>
+                    <Routes>
+                        <Route path="/routesMap" element={<RoutesMap/>}/>
+                        <Route path="/devices" element={<Devices/>}/>
+                        <Route path="/lastPosition" element={<LastPosition/>}/>
+                        <Route path="/" element={<Login/>}/>
+                        <Route path="/register" element={<Register/>}/>
+                    </Routes>
+                </BrowserRouter>
+            </div>
+        )
+    }
+
 }
 
 export default App;
