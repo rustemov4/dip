@@ -1,5 +1,5 @@
 import React from "react";
-import {Button, Form} from "react-bootstrap";
+import {Button, Form, Modal} from "react-bootstrap";
 import axios from "axios";
 import {GoogleMap, LoadScript, MarkerF} from "@react-google-maps/api";
 import Menu from "./menu";
@@ -12,6 +12,12 @@ class LastPosition extends React.Component {
             date: "",
             cars: [],
             selectedCar: "",
+            odometer: "",
+            lng: 0,
+            lat: 0,
+            address: "",
+            found: false,
+            show: false
         }
     }
 
@@ -31,28 +37,6 @@ class LastPosition extends React.Component {
             selectedCar: e.target.value
         })
     }
-    send = () => {
-        axios({
-            method: 'get',
-            url: 'http://localhost:8080/api/v1/latestPosition',
-            params: {
-                deviceID: this.state.selectedCar
-            }
-        }).then(res => {
-            this.setState({
-                coordinates: {
-                    lng: res.data.longitude,
-                    lat: res.data.latitude
-                },
-            })
-            const date = this.timeStampToDate(res.data.timestamp)
-            console.log(res.data.timestamp)
-            console.log(date)
-            this.setState({
-                date: date
-            })
-        })
-    }
     timeStampToDate = (timestamp) => {
         const date = new Date(timestamp * 1000);
 
@@ -62,6 +46,36 @@ class LastPosition extends React.Component {
 
         return `${year}-${month}-${day}`;
     }
+    sendNew = () => {
+        axios({
+            url: 'http://localhost:8080/api/v1/device',
+            method: 'get',
+            params: {
+                deviceID: this.state.selectedCar
+            }
+        }).then(res => {
+            console.log(res)
+            this.setState({
+                lng: res.data.lastvalidlongitude,
+                lat: res.data.lastvalidlatitude,
+                odometer: res.data.lastOdometerKM,
+                address: res.data.address,
+                found: true
+            })
+            this.setState(({
+                coordinates: {
+                    lng: res.data.lastvalidlongitude,
+                    lat: res.data.lastvalidlatitude
+                }
+            }))
+            const date = this.timeStampToDate(res.data.lastGPSTimestamp)
+            this.setState({
+                date: date
+            })
+        }).catch(err => {
+            console.log(err)
+        })
+    }
     center = {
         lat: 51.129313,
         lng: 71.439246
@@ -70,6 +84,16 @@ class LastPosition extends React.Component {
         width: '100%',
         height: '100%'
     };
+    handleClose = () => {
+        this.setState({
+            show: false,
+        })
+    }
+    handleShow = () => {
+        this.setState({
+            show: true
+        })
+    }
 
     render() {
         return (
@@ -86,13 +110,20 @@ class LastPosition extends React.Component {
                                         ))
                                     }
                                 </Form.Select>
-                                <Button variant={"outline-primary"} onClick={this.send} className={"mt-2 w-100"}
+                                <Button variant={"outline-primary"} onClick={this.sendNew} className={"mt-2 w-100"}
                                         disabled={this.state.selectedCar === ""}>Show last position
                                 </Button>
                             </Form>
-                            <div className={"badge bg-primary text-wrap p-3 mt-2 w-100"}>Last position for the
-                                date: {this.state.date}
-                            </div>
+                            {
+                                !this.state.found ? (
+                                    <div className={"badge bg-primary text-wrap p-3 mt-2 w-100"}>Choose the car
+                                    </div>
+                                ) : (
+                                    <Button variant={"outline-primary"} onClick={this.handleShow}
+                                            className={"mt-2 w-100"}>Show details
+                                    </Button>
+                                )
+                            }
                         </div>
                         {
                             Object.keys(this.state.coordinates).length > 0 && (
@@ -111,6 +142,43 @@ class LastPosition extends React.Component {
                         }
                     </div>
                 </div>
+                <Modal show={this.state.show} onHide={this.handleClose}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Last position details</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        {
+                            this.state.selectedCar !== "" && (
+                                <div>Selected car {this.state.selectedCar}</div>
+                            )
+                        }
+                        {
+                            this.state.date !== "" && (
+                                <div>The date {this.state.date}</div>
+                            )
+                        }
+                        {
+                            this.state.address !== "" && (
+                                <div>The address {this.state.address}</div>
+                            )
+                        }
+                        {
+                            this.state.odometer !== "" && (
+                                <div>The odometer {this.state.odometer}</div>
+                            )
+                        }
+                        {
+                            this.state.lng !== "" && (
+                                <div>The last longitude {this.state.lng}</div>
+                            )
+                        }
+                        {
+                            this.state.lat !== "" && (
+                                <div>The last latitude {this.state.lat}</div>
+                            )
+                        }
+                    </Modal.Body>
+                </Modal>
             </div>
         )
     }

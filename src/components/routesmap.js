@@ -20,7 +20,12 @@ class RoutesMap extends React.Component {
             cars: [],
             found: false,
             show: false,
-            driver: ""
+            driver: "",
+            city: "",
+            country: "",
+            postalCode: "",
+            speedSum: 0,
+            speedNum: 0,
         }
     }
 
@@ -74,9 +79,14 @@ class RoutesMap extends React.Component {
                 startStreet: res.data[0].streetaddress,
                 endStreet: res.data[res.data.length - 1].streetaddress,
                 found: true,
-                driver: res.data[0].driverID
+                driver: res.data[0].driverID,
+                city: res.data[0].city,
+                country: res.data[0].country,
+                postalCode: res.data[0].postalcode
             })
+            let num = 0
             res.data.forEach(coordinates => {
+                if (coordinates.longitude === 0 || coordinates.latitude === 0) return
                 const newObj = {
                     lng: coordinates.longitude,
                     lat: coordinates.latitude
@@ -84,6 +94,12 @@ class RoutesMap extends React.Component {
                 this.setState(prevState => ({
                     path: [...prevState.path, newObj]
                 }))
+                if (coordinates.speedKPH != 0) {
+                    this.setState(prevState => ({
+                        speedSum: prevState.speedSum + coordinates.speedKPH,
+                        speedNum: prevState.speedNum + 1
+                    }))
+                }
             })
         }).catch(err => {
             console.log(err)
@@ -190,8 +206,10 @@ class RoutesMap extends React.Component {
                                         mapContainerStyle={this.containerStyle}
                                     >
                                         <PolylineF
+
                                             path={this.state.path}
                                             options={{
+                                                geodesic: false,
                                                 strokeColor: '#FF0000',
                                                 strokeOpacity: 1.0,
                                                 strokeWeight: 2
@@ -210,14 +228,47 @@ class RoutesMap extends React.Component {
                         <Modal.Title>Route details</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
+                        {
+                            this.state.selectedCar !== "" && (<div>
+                                Selected car {this.state.selectedCar}
+                            </div>)
+                        }
+                        <div>Start coordinates: {this.state.startMarker.lat}/{this.state.startMarker.lng}</div>
+                        <div>End coordinates: {this.state.endMarker.lat}/{this.state.endMarker.lng}</div>
+                        {
+                            this.state.startStreet !== "" && (<div>
+                                Start street {this.state.startStreet}
+                            </div>)
+                        }
+                        {
+                            this.state.startStreet !== "" && (<div>
+                                End street {this.state.endStreet}
+                            </div>)
+                        }
+                        {
+                            this.state.driver !== "" && (
+                                <div>
+                                    Driver phone {this.state.driver}
+                                </div>
+                            )
+                        }
+                        {
+                            this.state.city !== "" && (<div>
+                                City {this.state.city}
+                            </div>)
+                        }
+                        {
+                            this.state.country !== "" && (<div>
+                                City {this.state.country}
+                            </div>)
+                        }
+                        {
+                            this.state.postalCode !== "" && (<div>
+                                City {this.state.postalCode}
+                            </div>)
+                        }
                         <div>
-                            Start street {this.state.startStreet}
-                        </div>
-                        <div>
-                            End street {this.state.endStreet}
-                        </div>
-                        <div>
-                            Driver phone {this.state.driver}
+                            Average speed {this.state.speedSum / this.state.speedNum}
                         </div>
                     </Modal.Body>
                 </Modal>

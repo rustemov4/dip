@@ -1,6 +1,6 @@
 import React from "react";
 import axios from "axios";
-import {Table, Pagination} from "react-bootstrap";
+import {Table, Pagination, Button, Modal} from "react-bootstrap";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Menu from "./menu";
 
@@ -11,7 +11,9 @@ class Devices extends React.Component {
         this.state = {
             cars: [],
             currentPage: 1,
-            pageCount: 0
+            pageCount: 0,
+            show: false,
+            selectedCar: ""
         }
     }
 
@@ -27,6 +29,24 @@ class Devices extends React.Component {
         });
     }
 
+    handleClose = () => {
+        this.setState({
+            show: false,
+        })
+    }
+    handleShow = (carId) => {
+        this.setState({
+            show: true,
+            selectedCar: carId
+        })
+    }
+    delete = () => {
+        const filtered = this.state.cars.filter(car => car.deviceID !== this.state.selectedCar)
+        this.setState({
+            cars: filtered,
+            show: false
+        })
+    }
     renderTableData = () => {
         const start = (this.state.currentPage - 1) * 12;
         const end = start + 12;
@@ -37,6 +57,8 @@ class Devices extends React.Component {
                 <td>{car.vehicleModel}</td>
                 <td>{car.simPhoneNumber}</td>
                 <td>{car.equipmentType}</td>
+                <td><Button variant={"outline-danger"} onClick={() => this.handleShow(car.deviceID)}>Delete car</Button>
+                </td>
             </tr>
         ));
         return items
@@ -67,7 +89,7 @@ class Devices extends React.Component {
             <div>
                 <Menu/>
                 <div className={"d-flex justify-content-center align-items-center"} style={{height: "100vh"}}>
-                    <div style={{width: "65%"}}>
+                    <div style={{width: "65%"}} className={"mt-5"}>
                         {this.state.cars.length > 0 &&
                             <Table responsive={true} striped bordered hover>
                                 <thead>
@@ -77,6 +99,7 @@ class Devices extends React.Component {
                                     <th>Vehicle Model</th>
                                     <th>Phone number</th>
                                     <th>Equipment Type</th>
+                                    <th>Delete car</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -87,9 +110,19 @@ class Devices extends React.Component {
                                 <Pagination className={"mt-2"}>{this.renderPaginationItems()}</Pagination>
                             </Table>
                         }
-
                     </div>
                 </div>
+                <Modal show={this.state.show} onHide={this.handleClose}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Warning</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <h2>Are you sure you want to delete the car {this.state.selectedCar}?</h2>
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button variant={"outline-danger"} onClick={() => this.delete()}>Delete car</Button>
+                    </Modal.Footer>
+                </Modal>
             </div>
         )
     }

@@ -15,11 +15,11 @@ class Menu extends React.Component {
                 <Navbar.Toggle aria-controls="basic-navbar-nav"/>
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="me-auto">
-                        <NavLink to={"/routesMap"} className={"link ms-2 text-decoration-none"}>Routes history</NavLink>
-                        <NavLink to={"/lastPosition"} className={"link ms-2 text-decoration-none"}>Last position </NavLink>
-                        <NavLink to={"/devices"} className={"link ms-2 text-decoration-none"}>Devices </NavLink>
-                        <NavLink to={"/register"} className={"link ms-2 text-decoration-none"}>Register User </NavLink>
-                        <NavLink to={"/"} className={"link ms-2 text-decoration-none"}>Log out </NavLink>
+                        <NavLink to={"/routesMap"} className={"link text-decoration-none"}>Routes history</NavLink>
+                        <NavLink to={"/lastPosition"} className={"link ms-3 text-decoration-none"}>Last position </NavLink>
+                        <NavLink to={"/devices"} className={"link ms-3 text-decoration-none"}>Devices </NavLink>
+                        <NavLink to={"/register"} className={"link ms-3 text-decoration-none"}>Register User </NavLink>
+                        <NavLink to={"/"} className={"link ms-3 text-decoration-none"}>Log out </NavLink>
                     </Nav>
                 </Navbar.Collapse>
             </Navbar>

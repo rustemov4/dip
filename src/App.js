@@ -5,6 +5,7 @@ import Devices from "./components/devices";
 import LastPosition from "./components/lastPosition";
 import Login from "./components/login";
 import Register from "./components/register";
+import Landing from "./components/landing";
 
 
 class App extends React.Component {
