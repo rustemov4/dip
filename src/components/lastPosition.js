@@ -2,7 +2,7 @@ import React from "react";
 import {Button, Form, Modal} from "react-bootstrap";
 import axios from "axios";
 import {GoogleMap, LoadScript, MarkerF} from "@react-google-maps/api";
-import Menu from "./menu";
+import Dashboard from "./sidemenu";
 
 class LastPosition extends React.Component {
     constructor(props) {
@@ -22,7 +22,14 @@ class LastPosition extends React.Component {
     }
 
     componentDidMount() {
-        axios.get('http://localhost:8080/api/v1/devices')
+        const curUser = localStorage.getItem("user")
+        if (curUser === null) window.location.href = "http://localhost:3000/"
+        const parsed = JSON.parse(curUser)
+        axios.get('http://localhost:8080/api/v1/devices', {
+            params: {
+                accountID: parsed.sub
+            }
+        })
             .then(response => {
                 this.setState({
                     cars: response.data
@@ -47,11 +54,14 @@ class LastPosition extends React.Component {
         return `${year}-${month}-${day}`;
     }
     sendNew = () => {
+        const curUser = localStorage.getItem("user")
+        const parsed = JSON.parse(curUser)
         axios({
             url: 'http://localhost:8080/api/v1/device',
             method: 'get',
             params: {
-                deviceID: this.state.selectedCar
+                deviceID: this.state.selectedCar,
+                accountID: parsed.sub
             }
         }).then(res => {
             console.log(res)
@@ -97,10 +107,11 @@ class LastPosition extends React.Component {
 
     render() {
         return (
-            <div>
-                <Menu/>
-                <div style={{height: "100vh"}} className={"d-flex align-items-center"}>
-                    <div className={"p-2 d-flex w-100 border border-2"} style={{height: "80vh"}}>
+            <div className={"d-flex"}>
+                <Dashboard/>
+                <div style={{height: "100vh"}} className={"d-flex align-items-center w-100 p-5"}>
+                    <div className={"p-2 d-flex w-100 border border-2 shadow-lg rounded bg-light"}
+                         style={{height: "80vh"}}>
                         <div className={"w-25 d-flex align-items-start flex-column"}>
                             <Form className={"mb-auto w-100"}>
                                 <Form.Select onClick={this.handleCarChange}>

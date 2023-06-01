@@ -1,36 +1,29 @@
 import React from "react";
-import axios from "axios";
-import {Table, Pagination, Button, Modal} from "react-bootstrap";
-import 'bootstrap/dist/css/bootstrap.min.css';
-import Menu from "./menu";
 import Dashboard from "./sidemenu";
+import {Button, Form, Modal, Pagination, Table} from "react-bootstrap";
+import axios from "axios";
 
-
-class Devices extends React.Component {
+class Users extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            cars: [],
+            accounts: [],
             currentPage: 1,
             pageCount: 0,
             show: false,
-            selectedCar: ""
+            selectedAccount: "",
+            cars: []
         }
     }
 
     componentDidMount() {
         const curUser = localStorage.getItem("user")
         if (curUser === null) window.location.href = "http://localhost:3000/"
-        const parsed = JSON.parse(curUser)
-        axios.get('http://localhost:8080/api/v1/devices',{
-            params: {
-                accountID: parsed.sub
-            }
-        })
+        axios.get('http://localhost:8080/api/v1/accounts')
             .then(response => {
                 this.setState({
-                    cars: response.data,
-                    pageCount: Math.ceil(response.data.length / 12)
+                    pageCount: Math.ceil(response.data.length / 12),
+                    accounts: response.data
                 })
             }).catch(error => {
             console.error(error);
@@ -42,31 +35,37 @@ class Devices extends React.Component {
             show: false,
         })
     }
-    handleShow = (carId) => {
+    handleShow = (account) => {
+        this.handleCars(account)
         this.setState({
             show: true,
-            selectedCar: carId
+            selectedAccount: account
         })
     }
-    delete = () => {
-        const filtered = this.state.cars.filter(car => car.deviceID !== this.state.selectedCar)
-        this.setState({
-            cars: filtered,
-            show: false
+    handleCars = (account) => {
+        axios.get('http://localhost:8080/api/v1/devices', {
+            params: {
+                accountID: account
+            }
+        })
+            .then(response => {
+                this.setState({
+                    cars: response.data
+                })
+            }).catch(error => {
+            console.error(error);
         })
     }
     renderTableData = () => {
         const start = (this.state.currentPage - 1) * 12;
         const end = start + 12;
-        const items = this.state.cars.slice(start, end).map((car, index) => (
+        const items = this.state.accounts.slice(start, end).map((account, index) => (
             <tr key={index}>
-                <td>{car.deviceID}</td>
-                <td>{car.vehicleMake}</td>
-                <td>{car.vehicleModel}</td>
-                <td>{car.simPhoneNumber}</td>
-                <td>{car.equipmentType}</td>
-                {/*<td><Button variant={"outline-danger"} onClick={() => this.handleShow(car.deviceID)}>Delete car</Button>*/}
-                {/*</td>*/}
+                <td>{account.accountID}</td>
+                <td>{account.password}</td>
+                <td>{account.creationtime}</td>
+                <td>{account.lastlogintime}</td>
+                <td>{<Button className={"w-100"} onClick={() => this.handleShow(account.accountID)}>Cars</Button>}</td>
             </tr>
         ));
         return items
@@ -98,16 +97,15 @@ class Devices extends React.Component {
                 <Dashboard/>
                 <div className={"d-flex justify-content-center align-items-center w-100"} style={{height: "100vh"}}>
                     <div style={{width: "65%"}} className={"mt-5"}>
-                        {this.state.cars.length > 0 &&
+                        {this.state.accounts.length > 0 &&
                             <Table responsive={true} striped bordered hover>
                                 <thead>
                                 <tr>
-                                    <th>DeviceID</th>
-                                    <th>Vehicle Make</th>
-                                    <th>Vehicle Model</th>
-                                    <th>Phone number</th>
-                                    <th>Equipment Type</th>
-                                    {/*<th>Delete car</th>*/}
+                                    <th>AccountID</th>
+                                    <th>Password</th>
+                                    <th>Creation time</th>
+                                    <th>Last login</th>
+                                    <th>Cars</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -122,13 +120,18 @@ class Devices extends React.Component {
                 </div>
                 <Modal show={this.state.show} onHide={this.handleClose}>
                     <Modal.Header closeButton>
-                        <Modal.Title>Warning</Modal.Title>
+                        <Modal.Title>Cars of {this.state.selectedAccount} </Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-                        <h2>Are you sure you want to delete the car {this.state.selectedCar}?</h2>
+
+                        {
+                            this.state.cars.map(car => (
+                                <div>{car.deviceID}</div>
+                            ))
+                        }
                     </Modal.Body>
                     <Modal.Footer>
-                        <Button variant={"outline-danger"} onClick={() => this.delete()}>Delete car</Button>
+                        <Button variant={"outline-danger"}>Close</Button>
                     </Modal.Footer>
                 </Modal>
             </div>
@@ -136,4 +139,4 @@ class Devices extends React.Component {
     }
 }
 
-export default Devices
+export default Users

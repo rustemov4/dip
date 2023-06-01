@@ -3,6 +3,7 @@ import axios from "axios";
 import {GoogleMap, LoadScript, MarkerF, PolylineF} from "@react-google-maps/api";
 import {Button, Form, Modal} from "react-bootstrap";
 import Menu from "./menu";
+import Dashboard from "./sidemenu";
 
 class RoutesMap extends React.Component {
     constructor(props) {
@@ -30,7 +31,14 @@ class RoutesMap extends React.Component {
     }
 
     componentDidMount() {
-        axios.get('http://localhost:8080/api/v1/devices')
+        const curUser = localStorage.getItem("user")
+        if (curUser === null) window.location.href = "http://localhost:3000/"
+        const parsed = JSON.parse(curUser)
+        axios.get('http://localhost:8080/api/v1/devices',{
+            params: {
+                accountID: parsed.sub
+            }
+        })
             .then(response => {
                 this.setState({
                     cars: response.data
@@ -41,6 +49,9 @@ class RoutesMap extends React.Component {
     }
 
     send = () => {
+        const curUser = localStorage.getItem("user")
+
+        const parsed = JSON.parse(curUser)
         const start = new Date(`${this.state.selectedDate}T${this.state.selectedStartTime}:00`).getTime() / 1000
         const end = new Date(`${this.state.selectedDate}T${this.state.selectedEndTime}:00`).getTime() / 1000
         console.log(start)
@@ -51,7 +62,8 @@ class RoutesMap extends React.Component {
             params: {
                 deviceID: this.state.selectedCar,
                 startTimestamp: start,
-                endTimestamp: end
+                endTimestamp: end,
+                accountID: parsed.sub
             }
         }).then(res => {
             console.log(res.data)
@@ -150,10 +162,11 @@ class RoutesMap extends React.Component {
 
     render() {
         return (
-            <div>
-                <Menu/>
-                <div style={{height: "100vh"}} className={"d-flex align-items-center"}>
-                    <div className={"p-2 d-flex w-100 border border-2"} style={{height: "80vh"}}>
+            <div className={"d-flex"}>
+                <Dashboard/>
+                <div style={{height: "100vh"}}
+                     className={"d-flex align-items-center p-5 w-100"}>
+                    <div className={"p-2 d-flex w-100 border border-2 shadow-lg rounded bg-light"} style={{height: "80vh"}}>
                         <div className={"w-25 d-flex align-items-start flex-column"}>
                             <Form className={"mb-auto w-100"}>
                                 <Form.Group>

@@ -84,3 +84,88 @@ code {
         display: block;
     }
 }
+
+.sidebar {
+    background: #000;
+    color: #fff;
+    height: 100vh;
+    width: 200px;
+    transition: all 0.5s;
+    padding: 10px;
+}
+
+.top_section {
+    display: flex;
+    align-items: center;
+    padding: 20px 15px;
+}
+
+.logo {
+    font-size: 30px;
+}
+
+.bars {
+    display: flex;
+    font-size: 25px;
+    margin-left: 50px;
+}
+
+.link {
+    display: flex;
+    color: #fff;
+    padding: 10px 15px;
+    gap: 15px;
+    transition: all 0.5s;
+}
+
+.link:hover {
+    background: lightskyblue;
+    color: #000;
+    transition: all 0.5s;
+}
+
+.active {
+    background: lightskyblue;
+    color: #000;
+}
+
+.login_img {
+    width: 500px;
+    height: 400px;
+}
+
+.icon, .link_text {
+    font-size: 20px;
+}
+.login_container {
+    display: flex;
+}
+@media (max-width: 768px) {
+    .login_container {
+        display: block;
+    }
+    .sidebar {
+        width: 50px;
+    }
+
+    .icon, .link_text {
+        font-size: 27px;
+    }
+
+    .logo {
+        display: none;
+    }
+
+    .link_text {
+        display: none;
+    }
+
+    .icon-wrapper {
+        text-align: center;
+    }
+
+    .link {
+        display: flex;
+        justify-content: center;
+    }
+}

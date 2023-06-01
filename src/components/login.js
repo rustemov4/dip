@@ -45,26 +45,34 @@ class Login extends React.Component {
 
     render() {
         return (
-            <div className={"d-flex justify-content-center align-items-center w-100"} style={{height: "100vh"}}>
-                <Form className={"w-25"}>
-                    <h1>Login</h1>
-                    <Form.Group>
-                        <Form.Label>Email address</Form.Label>
-                        <Form.Control type={"text"} placeholder={"Enter email"}
-                                      onChange={this.emailOnChange}></Form.Control>
-                    </Form.Group>
-                    <Form.Group>
-                        <Form.Label>Password</Form.Label>
-                        <Form.Control type={"password"} placeholder={"Enter password"}
-                                      onChange={this.passwordOnChange}></Form.Control>
-                    </Form.Group>
-                    <Button onClick={this.send} className={"mt-3"} variant="outline-primary">Submit</Button>
-                    {this.state.errorText !== "" && (
-                        <div className={"badge bg-danger text-wrap p-3 mt-2 w-100"}> {this.state.errorText}
-                        </div>
-                    )}
-                </Form>
+            <div className={"d-flex justify-content-center align-items-center"}
+                 style={{height: "100vh"}}>
+                <div className={"shadow-lg login_container"}>
+                    <div>
+                        <img src={"https://roadcaraccessories.com/wp-content/uploads/2022/09/16.jpg"} className={"login_img"}/>
+                    </div>
+                    <Form className={"bg-light shadow-lg rounded w-100"}
+                          style={{padding: "20px"}}>
+                        <h1>Login</h1>
+                        <Form.Group>
+                            <Form.Label>Email address</Form.Label>
+                            <Form.Control type={"text"} placeholder={"Enter email"}
+                                          onChange={this.emailOnChange}></Form.Control>
+                        </Form.Group>
+                        <Form.Group>
+                            <Form.Label>Password</Form.Label>
+                            <Form.Control type={"password"} placeholder={"Enter password"}
+                                          onChange={this.passwordOnChange}></Form.Control>
+                        </Form.Group>
+                        <Button onClick={this.send} className={"mt-3"} variant="outline-primary">Submit</Button>
+                        {this.state.errorText !== "" && (
+                            <div className={"badge bg-danger text-wrap p-3 mt-2 w-100"}> {this.state.errorText}
+                            </div>
+                        )}
+                    </Form>
+                </div>
             </div>
+
         )
     }
 }
