@@ -140,6 +140,11 @@ code {
 .login_container {
     display: flex;
 }
+.reports {
+    width: 100%; /* Adjust the width as needed */
+    height: 100%; /* Adjust the height as needed */
+    overflow-y: auto; /* Enable scrolling */
+}
 @media (max-width: 768px) {
     .login_container {
         display: block;

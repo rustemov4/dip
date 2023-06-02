@@ -2,7 +2,6 @@ import React from "react";
 import axios from "axios";
 import {Table, Pagination, Button, Modal} from "react-bootstrap";
 import 'bootstrap/dist/css/bootstrap.min.css';
-import Menu from "./menu";
 import Dashboard from "./sidemenu";
 
 

@@ -1,27 +1,28 @@
 import React from "react";
 import {Alert, Button, Form} from "react-bootstrap";
-import Menu from "./menu";
 import Dashboard from "./sidemenu";
+import axios from "axios";
 
 class Register extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            email: "",
+            login: "",
             password: "",
             checkPassword: "",
             alert: "",
             color: 'danger'
         }
     }
+
     componentDidMount() {
         const curUser = localStorage.getItem("user")
         if (curUser === null) window.location.href = "http://localhost:3000/"
     }
 
-    handleEmailChange = (e) => {
+    handleLoginChange = (e) => {
         this.setState({
-            email: e.target.value
+            login: e.target.value
         })
     }
     handlePasswordChange = (e) => {
@@ -36,7 +37,7 @@ class Register extends React.Component {
     }
     handleAddUser = (e) => {
         e.preventDefault()
-        if (this.state.email === "" || this.state.password === "" || this.state.checkPassword === "") {
+        if (this.state.login === "" || this.state.password === "" || this.state.checkPassword === "") {
             this.setState({
                 alert: "Fill all fields",
             })
@@ -55,12 +56,27 @@ class Register extends React.Component {
             return
         }
         const body = {
-            email: this.state.email,
+            accountID: this.state.login,
             password: this.state.password
         }
-        this.setState({
-            alert: "User created",
-            color: 'success'
+        axios.post("http://localhost:8080/api/v1/register", body).then(res => {
+            this.setState({
+                alert: "User created",
+                color: 'success'
+            })
+        }).catch(e => {
+            if (e.response.status === 409) {
+                this.setState({
+                    alert: "User exists",
+                    color: "warning"
+                })
+            } else {
+                this.setState({
+                    alert: "Error in creating",
+                    color: 'danger'
+                })
+            }
+            console.log(e)
         })
     }
 
@@ -73,10 +89,10 @@ class Register extends React.Component {
                         <Form className={"bg-light shadow-lg rounded"} style={{height: "350px", padding: "20px"}}>
                             <Form.Group className="mb-3">
                                 <Form.Label>Email address or login</Form.Label>
-                                <Form.Control type="text" placeholder="Enter email or login"
-                                              onChange={this.handleEmailChange}/>
+                                <Form.Control type="text" placeholder="Enter login"
+                                              onChange={this.handleLoginChange}/>
                                 <Form.Text className="text-muted">
-                                    We'll never share your email with anyone else.
+                                    We'll never share your login with anyone else.
                                 </Form.Text>
                             </Form.Group>
 

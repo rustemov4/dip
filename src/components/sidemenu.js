@@ -5,6 +5,7 @@ import {
 } from "react-icons/fa";
 import {BiLogOut, BiMap} from "react-icons/bi";
 import {AiOutlineUserAdd} from "react-icons/ai"
+import {TbMapPins, TbReportSearch} from "react-icons/tb"
 
 
 class Dashboard extends React.Component {
@@ -14,6 +15,16 @@ class Dashboard extends React.Component {
             user: "",
             isAdmin: false,
             menuItem: [
+                {
+                    path: "/reports",
+                    name: "Reports",
+                    icon: <TbReportSearch/>
+                },
+                {
+                    path: "/devicegroup",
+                    name: "Group device",
+                    icon: <TbMapPins/>
+                },
                 {
                     path: "/users",
                     name: "Users",
@@ -58,6 +69,11 @@ class Dashboard extends React.Component {
         if (parsed.roles.includes('ROLE_USER')) {
             this.setState({
                 menuItem: [
+                    {
+                        path: "/reports",
+                        name: "Reports",
+                        icon: <TbReportSearch/>
+                    },
                     {
                         path: "/routesMap",
                         name: "Routes history",
