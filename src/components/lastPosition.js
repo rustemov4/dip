@@ -17,7 +17,9 @@ class LastPosition extends React.Component {
             lat: 0,
             address: "",
             found: false,
-            show: false
+            show: false,
+            all: false,
+            allCars: []
         }
     }
 
@@ -82,8 +84,32 @@ class LastPosition extends React.Component {
             this.setState({
                 date: date
             })
+            this.setState({
+                all: false
+            })
         }).catch(err => {
             console.log(err)
+        })
+    }
+    showAll = () => {
+        const curUser = localStorage.getItem("user")
+        const parsed = JSON.parse(curUser)
+        axios({
+            url: 'http://localhost:8080/api/v1/devices',
+            method: 'get',
+            params: {
+                accountID: "logitex"
+            }
+        }).then(res => {
+            console.log(res.data)
+            this.setState({
+                allCars: res.data
+            })
+            this.setState({
+                all: true
+            })
+        }).catch(e => {
+            console.log(e)
         })
     }
     center = {
@@ -124,6 +150,8 @@ class LastPosition extends React.Component {
                                 <Button variant={"outline-primary"} onClick={this.sendNew} className={"mt-2 w-100"}
                                         disabled={this.state.selectedCar === ""}>Show last position
                                 </Button>
+                                <Button variant={"outline-primary"} onClick={this.showAll} className={"mt-2 w-100"}>Show
+                                    all</Button>
                             </Form>
                             {
                                 !this.state.found ? (
@@ -137,7 +165,7 @@ class LastPosition extends React.Component {
                             }
                         </div>
                         {
-                            Object.keys(this.state.coordinates).length > 0 && (
+                            (Object.keys(this.state.coordinates).length > 0 || this.state.all) && (
                                 <LoadScript
                                     googleMapsApiKey="AIzaSyAkvV72uGI04gRtFVa15c5cIgZw8dfAMs4"
                                 >
@@ -146,7 +174,22 @@ class LastPosition extends React.Component {
                                         zoom={9}
                                         mapContainerStyle={this.containerStyle}
                                     >
-                                        <MarkerF position={this.state.coordinates}/>
+                                        {
+                                            this.state.all === true ? (
+                                                <div>
+                                                    {
+                                                        this.state.allCars.map(car => (
+                                                            <MarkerF position={{
+                                                                lng: car.lastvalidlongitude,
+                                                                lat: car.lastvalidlatitude
+                                                            }}/>
+                                                        ))
+                                                    }
+                                                </div>
+                                            ) : (
+                                                <MarkerF position={this.state.coordinates}/>
+                                            )
+                                        }
                                     </GoogleMap>
                                 </LoadScript>
                             )

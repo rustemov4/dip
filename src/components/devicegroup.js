@@ -2,7 +2,7 @@ import React from "react";
 import Dashboard from "./sidemenu";
 import axios from "axios";
 import {Button, Form} from "react-bootstrap";
-import {GoogleMap, LoadScript, MarkerF} from "@react-google-maps/api";
+import {GoogleMap, InfoWindowF, LoadScript, MarkerF} from "@react-google-maps/api";
 
 class Devicegroup extends React.Component {
     constructor(props) {
@@ -56,6 +56,7 @@ class Devicegroup extends React.Component {
         width: '100%',
         height: '100%'
     };
+
     render() {
         return (
             <div className={"d-flex"}>
@@ -93,7 +94,17 @@ class Devicegroup extends React.Component {
                                                 <MarkerF position={{
                                                     lng: val.lastvalidlongitude,
                                                     lat: val.lastvalidlatitude
-                                                }}/>
+                                                }}>
+                                                    <InfoWindowF position={{
+                                                        lng: val.lastvalidlongitude,
+                                                        lat: val.lastvalidlatitude
+                                                    }}>
+                                                        <div>
+                                                            <div>{val.deviceID}</div>
+                                                            <div>{val.vehicleMake} {val.vehicleModel}</div>
+                                                        </div>
+                                                    </InfoWindowF>
+                                                </MarkerF>
                                             ))
                                         }
                                     </GoogleMap>

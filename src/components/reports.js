@@ -100,7 +100,7 @@ class Reports extends React.Component {
                                     <Form.Control type={"date"} onChange={this.handleToChange}/>
                                 </Form.Group>
                                 <Form.Group>
-                                    <Form.Label>Speed KPH</Form.Label>
+                                    <Form.Label>Speeding over KPH</Form.Label>
                                     <Form.Control type={"number"} onChange={this.handleSpeedChange}/>
                                 </Form.Group>
                                 <Button variant={"outline-primary"} className={"mt-2 w-100"} onClick={this.send}>Generate
